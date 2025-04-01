@@ -1,0 +1,27 @@
+[project]
+name = "mcp-hsm"
+version = "0.1.0"
+description = "A MCP server project to handle cryptographic operations with Hardware Security Module (HSM) Implementation"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "httpx>=0.28.1",
+    "mcp>=1.4.1",
+    "cryptography>=41.0.2",
+    "pydantic>=2.0.0",
+    "asyncio>=3.0.0",
+    "gmssl>=2.5.4",
+    "asn1crypto>=1.5.1",
+    "pyasn1_modules",
+    "pyasn1>=0.5.0",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/hsm"]
+
+[build-system]
+requires = [ "hatchling",]
+build-backend = "hatchling.build"
+
+[project.scripts]
+mcp-hsm = "hsm:main"
