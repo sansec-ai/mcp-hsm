@@ -31,6 +31,10 @@ git clone https://github.com/sansec-ai/mcp-hsm.git
 cd mcp-hsm
 ```
 
+### 配置
+- 符合《GM/T 0018》规范的密码设备接口库放入lib目录。
+- 接口库对应的配置文件放到密码厂商指定的路径下。
+
 ### 使用示例
 - 配置MCP客户端与mcp-hsm的连接
 - 调用mcp-hsm提供的API进行加解密、签名验签等操作

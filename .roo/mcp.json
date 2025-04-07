@@ -1,0 +1,20 @@
+{
+  "mcpServers": {
+    "mcp-hsm": {
+      "command": "uv",
+      "args": [
+        "run",
+        "--with",
+        "mcp[cli]",
+        "--with-editable",
+        ".",
+        "mcp",
+        "run",
+        ".\\src\\tools\\hsm_tools.py"
+      ],
+      "timeout": 15,
+      "alwaysAllow": [],
+      "disabled": false
+    }
+  }
+}
