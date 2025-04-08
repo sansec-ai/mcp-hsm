@@ -83,7 +83,7 @@ class hsm:
         rand = (c_ubyte * length)()
         return self.lib.SDF_GenerateRandom(hsess, length, rand), bytes(rand)
 
-    def SDF_ImportKey(self, hsess: c_void_p, key: bytes) -> Tuple[int, c_void_p]:
+    def SDF_ImportKey(self, hsess: c_void_p, key: str) -> Tuple[int, c_void_p]:
         """
         导入明文会话密钥
         desc: 导入明文会话密钥，同时返回密钥句柄
@@ -93,6 +93,7 @@ class hsm:
         return: 0 成功 非0 失败
         """
         hkey = c_void_p()
+        key = bytes.fromhex(key)
         return self.lib.SDF_ImportKey(hsess, key, len(key), byref(hkey)), hkey
 
     def SDF_DestroyKey(self, hsess: c_void_p, hkey: c_void_p) -> int:
@@ -105,7 +106,7 @@ class hsm:
         """
         return self.lib.SDF_DestroyKey(hsess, hkey)
 
-    def SDF_Encrypt(self, hsess: c_void_p, hkey: c_void_p, algid: int, iv: bytes, plaintext: bytes) -> Tuple[int, bytes, int]:
+    def SDF_Encrypt(self, hsess: c_void_p, hkey: c_void_p, algid: int, iv: str, plaintext: str) -> Tuple[int, bytes, int]:
         """
         对称加密
         desc: 使用指定的密钥句柄和IV对数据进行对称加密运算
@@ -118,11 +119,12 @@ class hsm:
         return: 0 成功 非0 失败
         ps: 此函数不对数据进行填充处理，输入的数据必须是指定算法分组长度的整数倍
         """
+        plaintext = bytes.fromhex(plaintext)
         ciphertext_len = len(plaintext)
         ciphertext = (c_ubyte * ciphertext_len)()
         return self.lib.SDF_Encrypt(hsess, hkey, algid, iv, plaintext, len(plaintext), ciphertext, byref(c_uint32(ciphertext_len))), bytes(ciphertext), ciphertext_len
 
-    def SDF_Decrypt(self, hsess: c_void_p, hkey: c_void_p, algid: int, iv: bytes, ciphertext: bytes) -> Tuple[int, bytes, int]:
+    def SDF_Decrypt(self, hsess: c_void_p, hkey: c_void_p, algid: int, iv: str, ciphertext: str) -> Tuple[int, bytes, int]:
         """
         对称解密
         desc: 使用指定的密钥句柄和IV对数据进行对称解密运算
@@ -135,6 +137,7 @@ class hsm:
         return: 0 成功 非0 失败
         ps: 此函数不对数据进行填充处理，输入的数据必须是指定算法分组长度的整数倍
         """
+        ciphertext = bytes.fromhex(ciphertext)
         plaintext_len = len(ciphertext)
         plaintext = (c_ubyte * plaintext_len)()
         return self.lib.SDF_Decrypt(hsess, hkey, algid, iv, ciphertext, len(ciphertext), plaintext, byref(c_uint32(plaintext_len))), bytes(plaintext), plaintext_len
@@ -154,7 +157,7 @@ class hsm:
         pri = ECCrefPrivateKey()
         return self.lib.SDF_GenerateKeyPair_ECC(hsess, algid, keybits, byref(pub), byref(pri)), bytes(pub), bytes(pri)
 
-    def SDF_ExternalSign_ECC(self, hsess: c_void_p, algid: int, pri: bytes, data: bytes) -> Tuple[int, bytes]:
+    def SDF_ExternalSign_ECC(self, hsess: c_void_p, algid: int, pri: str, data: str) -> Tuple[int, bytes]:
         """
         外部密钥ECC签名
         desc: 使用外部ECC私钥对数据进行签名运算
@@ -167,9 +170,11 @@ class hsm:
         ps: 输入数据为待签数据的杂凑值。当使用SM2算法时，该输入数据为待签数据经过SM2签名预处理的结果。
         """
         sign = ECCSignature()
+        pri = bytes.fromhex(pri)
+        data = bytes.fromhex(data)
         return self.lib.SDF_ExternalSign_ECC(hsess, algid, pri, data, len(data), byref(sign)), bytes(sign)
 
-    def SDF_ExternalVerify_ECC(self, hsess: c_void_p, algid: int, pub: bytes, data: bytes, sign: bytes) -> int:
+    def SDF_ExternalVerify_ECC(self, hsess: c_void_p, algid: int, pub: str, data: str, sign: str) -> int:
         """
         外部密钥ECC验证
         desc: 使用外部ECC公钥对ECC签名值进行验证运算
@@ -181,4 +186,7 @@ class hsm:
         return: 0 成功 非0失败
         ps: 输入数据为待签数据的杂凑值。当使用SM2算法时，该输入数据为待签数据经过SM2签名预处理的结果。
         """
+        pub = bytes.fromhex(pub)
+        data = bytes.fromhex(data)
+        sign = bytes.fromhex(sign)
         return self.lib.SDF_ExternalVerify_ECC(hsess, algid, pub, data, len(data), sign)
