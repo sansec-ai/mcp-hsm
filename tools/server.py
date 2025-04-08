@@ -1,19 +1,23 @@
+import sys
+sys.path.append('.')
+
 import hsm
 from hsm.sm2 import ECCrefPublicKey
 from hsm.sm2 import ECCrefPrivateKey
 from hsm.sm2 import ECCSignature
 from hsm.sm2 import SGD_SM2
+from hsm.symm import SGD_SM4_ECB
+from typing import Tuple
 
 import os
-from typing import Tuple
-from mcp.server.fastmcp import FastMCP
-
-
 current_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.dirname(current_dir)
-parent_dir = os.path.dirname(parent_dir)
-lib_dir = os.path.join(parent_dir, "lib\\swsds.dll")
+if os.name == 'nt':
+    lib_dir = os.path.join(parent_dir, "lib\\hsm_0018.dll")
+elif os.name == 'posix':
+    lib_dir = os.path.join(parent_dir, "lib/libhsm_0018.so")
 
+from mcp.server.fastmcp import FastMCP
 mcp = FastMCP("mcp-hsm")
 
 
@@ -103,8 +107,6 @@ def sm2_sign(data: str, pri: str) -> Tuple[int, str]:
         print("SDF_OpenSession failed, err code: ", hex(ret))
         return ret, None
     
-    pri = bytes.fromhex(pri)
-    data = bytes.fromhex(data)
     ret, sign = hsm_instance.SDF_ExternalSign_ECC(session, SGD_SM2, pri, data)
     if ret != 0:
         print("SDF_ExternalSign_ECC failed, err code: ", hex(ret))
@@ -138,9 +140,6 @@ def sm2_verify(data: str, pub: str, sign: str) -> int:
         print("SDF_OpenSession failed, err code: ", hex(ret))
         return ret
     
-    pub = bytes.fromhex(pub)
-    data = bytes.fromhex(data)
-    sign = bytes.fromhex(sign)
     ret = hsm_instance.SDF_ExternalVerify_ECC(session, SGD_SM2, pub, data, sign)
     if ret != 0:
         print("SDF_ExternalVerify_ECC failed, err code: ", hex(ret))
@@ -178,18 +177,12 @@ def symm_encrypt(key: str, algid: int, iv: str, plaintext: str) -> Tuple[int, st
         print("SDF_OpenSession failed, err code: ", hex(ret))
         return ret, None, None
 
-    key = bytes.fromhex(key)
     ret, hkey = hsm_instance.SDF_ImportKey(session, key)
     if ret != 0:
         print("SDF_ImportKey failed, err code: ", hex(ret))
         return ret, None, None
     
-    if iv is None:
-        iv_copy = None
-    else:
-        iv_copy = bytes.fromhex(iv)
-    plaintext = bytes.fromhex(plaintext)
-    ret, enc_data, enc_data_len = hsm_instance.SDF_Encrypt(session, hkey, algid, iv_copy, plaintext)
+    ret, enc_data, enc_data_len = hsm_instance.SDF_Encrypt(session, hkey, algid, iv, plaintext)
     if ret != 0:
         print("SDF_Encrypt failed, err code: ", hex(ret))
         return ret, None, None
@@ -226,18 +219,12 @@ def symm_decrypt(key: str, algid: int, iv: str, enc_data: str) -> Tuple[int, str
         print("SDF_OpenSession failed, err code: ", hex(ret))
         return ret, None, None
 
-    key = bytes.fromhex(key)
     ret, hkey = hsm_instance.SDF_ImportKey(session, key)
     if ret != 0:
         print("SDF_ImportKey failed, err code: ", hex(ret))
         return ret, None, None
     
-    if iv is None:
-        iv_copy = None
-    else:
-        iv_copy = bytes.fromhex(iv)
-    enc_data = bytes.fromhex(enc_data)
-    ret, plaintext, plaintext_len = hsm_instance.SDF_Decrypt(session, hkey, algid, iv_copy, enc_data)
+    ret, plaintext, plaintext_len = hsm_instance.SDF_Decrypt(session, hkey, algid, iv, enc_data)
     if ret != 0:
         print("SDF_Decrypt failed, err code: ", hex(ret))
         return ret, None, None
@@ -246,3 +233,11 @@ def symm_decrypt(key: str, algid: int, iv: str, enc_data: str) -> Tuple[int, str
     hsm_instance.SDF_CloseSession(session)
     hsm_instance.SDF_CloseDevice()
     return ret, iv, plaintext.hex()
+
+@mcp.tool()
+def get_sm4_ecb_algid() -> int:
+    """
+    获取SM4 ECB算法标识
+    return : algid
+    """
+    return SGD_SM4_ECB

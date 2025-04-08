@@ -1,7 +1,7 @@
 from typing import Optional
 
 
-def print_data(buffer_name: Optional[str], buffer: Optional[bytes], buffer_length: int, column_length: int) -> None:
+def print_data(buffer_name: Optional[str], buffer: Optional[str], buffer_length: int, column_length: int) -> None:
     if buffer is None:
         print("Buffer is NULL.")
         return
@@ -14,13 +14,16 @@ def print_data(buffer_name: Optional[str], buffer: Optional[bytes], buffer_lengt
         print("Column length must be greater than zero.")
         return
 
+    buffer = bytes.fromhex(buffer)
+    buffer_length = len(buffer)
+    
     if buffer_name is None:
         print(f"No Name[{buffer_length}]")
     else:
         print(f"{buffer_name}[{buffer_length}]")
 
     full_rows = buffer_length // column_length
-
+    
     for i in range(full_rows):
         start = i * column_length
         hex_bytes = buffer[start:start+column_length]

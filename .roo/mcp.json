@@ -10,7 +10,7 @@
         ".",
         "mcp",
         "run",
-        ".\\src\\tools\\hsm_tools.py"
+        ".\\tools\\server.py"
       ],
       "timeout": 15,
       "alwaysAllow": [],
