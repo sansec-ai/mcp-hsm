@@ -1,4 +1,4 @@
-# MCP协议密码套件 (mcp-hsm)  [English Version](./README_EN.md)
+# MCP协议密码套件 (mcp-hsm)  [English Version](./README_en.md)
 
 [![GitHub](https://img.shields.io/github/license/sansec-ai/mcp-hsm)](https://github.com/sansec-ai/mcp-hsm)
 
