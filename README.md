@@ -1,4 +1,4 @@
-# MCP协议密码套件 (mcp-hsm)
+# MCP协议密码套件 (mcp-hsm)  [English Version](./README_EN.md)
 
 [![GitHub](https://img.shields.io/github/license/sansec-ai/mcp-hsm)](https://github.com/sansec-ai/mcp-hsm)
 
@@ -29,6 +29,10 @@ mcp-hsm 是一个基于 MCP 协议的密码套件，旨在为 AI 应用提供高
 ```bash
 git clone https://github.com/sansec-ai/mcp-hsm.git
 cd mcp-hsm
+uv venv
+source .venv/bin/activate
+# 启动测试
+uv run tools/server.py
 ```
 
 ### 配置

@@ -29,6 +29,10 @@ mcp-hsm is a cryptographic suite based on the MCP protocol, designed to provide 
 ```bash
 git clone https://github.com/sansec-ai/mcp-hsm.git
 cd mcp-hsm
+uv venv
+source .venv/bin/activate
+# test
+uv run tools/server.py
 ```
 
 ### Configuration
