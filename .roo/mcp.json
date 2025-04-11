@@ -3,18 +3,17 @@
     "mcp-hsm": {
       "command": "uv",
       "args": [
+        "--directory",
+        "/mnt/d/agent/mcp-hsm",
         "run",
-        "--with",
-        "mcp[cli]",
-        "--with-editable",
-        ".",
-        "mcp",
-        "run",
-        ".\\tools\\server.py"
+        "server.py"
       ],
-      "timeout": 15,
+      "timeout": 60,
       "alwaysAllow": [],
-      "disabled": false
+      "disabled": false,
+      "env": {
+        "LIBHSM_PATH": "./lib/libhsm_0018.so"
+      }
     }
   }
 }

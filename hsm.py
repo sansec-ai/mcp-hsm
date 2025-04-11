@@ -1,6 +1,6 @@
 from ctypes import *
 from typing import Tuple
-from .sm2 import *
+from sm2 import *
 
 
 class hsm:

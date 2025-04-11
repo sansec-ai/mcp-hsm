@@ -2,20 +2,20 @@ import sys
 sys.path.append('.')
 
 import hsm
-from hsm.sm2 import ECCrefPublicKey
-from hsm.sm2 import ECCrefPrivateKey
-from hsm.sm2 import ECCSignature
-from hsm.sm2 import SGD_SM2
-from hsm.symm import SGD_SM4_ECB
+from sm2 import ECCrefPublicKey
+from sm2 import ECCrefPrivateKey
+from sm2 import ECCSignature
+from sm2 import SGD_SM2
+from symm import SGD_SM4_ECB
 from typing import Tuple
 
 import os
 current_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.dirname(current_dir)
 if os.name == 'nt':
-    lib_dir = os.path.join(parent_dir, "lib\\hsm_0018.dll")
+    lib_dir = os.getenv("LIBHSM_PATH", ".\\lib\\hsm_0018.dll")
 elif os.name == 'posix':
-    lib_dir = os.path.join(parent_dir, "lib/libhsm_0018.so")
+    lib_dir = os.getenv("LIBHSM_PATH", "./lib/libhsm_0018.so")
 
 from mcp.server.fastmcp import FastMCP
 mcp = FastMCP("mcp-hsm")
@@ -241,3 +241,7 @@ def get_sm4_ecb_algid() -> int:
     return : algid
     """
     return SGD_SM4_ECB
+
+if __name__ == "__main__":
+    # Initialize and run the server
+    mcp.run(transport='stdio')
