@@ -4,60 +4,82 @@
 
 ## Introduction
 
-mcp-hsm is a cryptographic suite based on the MCP protocol, designed to provide efficient cryptographic support for AI applications. It supports SM2 / SM3 / SM4 algorithms, optimizes performance through hardware module acceleration, and provides secure key storage and management.
+MCP-HSM is a cryptographic suite based on the MCP protocol, designed to provide efficient cryptographic support for AI applications. It fully supports domestic cryptographic algorithms, complies with cryptographic industry standards, and uses hardware security modules to provide key management and cryptographic operation services.
 
 ## Key Features
 
-- **Standard MCP Protocol**: Easy integration with AI applications
-- **Supports SM2 / SM3 / SM4 Algorithms**: Compliant with national cryptographic standards
-- **Hardware Module Acceleration**: Optimized performance and enhanced processing speed
-- **HSM Key Management**: Provides secure key storage and management
-- **Compliance with GM/T 0018 Standard**: Ensures adherence to national cryptographic regulations
+- **Perform cryptographic operations using natural language**
+- **Compliant with standard MCP protocol**: Easy integration for AI applications
+- **Supports domestic cryptographic algorithms**: SM2/SM3/SM4 cryptographic algorithms supported
+- **Complies with cryptographic industry standards**: Adheres to standards such as "GM/T 0018 Interface specifications of cryptography device application"
+- **Utilizes hardware security modules**: Provides more secure key management and cryptographic operations
 
 ## Architecture Overview
 
-![Architecture Diagram](./doc/architecture.jpg)
+![Architecture Diagram](./doc/architecture.png)
 
-- **MCP Client**: Communicates with mcp-hsm via a 1:1 connection
-- **mcp-hsm**: Provides symmetric encryption/decryption, asymmetric encryption/decryption, signature verification, hash computation, and key management functions
-- **Hardware Drivers**: Supports multiple hardware modules to achieve low-level hardware acceleration
+- **MCP Client**: Communicates with MCP-HSM using standard input/output (stdio);
+- **MCP-HSM**: The MCP server that provides cryptographic operations and key management tools for the MCP client;
+- **Hardware Drivers**: Supports various hardware security modules, offering faster and more secure services;
 
-## Installation and Usage
+## Installation and Usage (Windows Environment Example)
 
 ### Installation
 
 ```bash
+# Clone the source code
 git clone https://github.com/sansec-ai/mcp-hsm.git
 cd mcp-hsm
+# Install Python package manager uv
+pip install uv
+# Create a virtual environment
 uv venv
-source .venv/bin/activate
-# test
-uv run tools/server.py
 ```
 
-### Configuration
-- Rename the cryptographic device interface library compliant with the GM/T 0018 standard and place it in the lib directory. For Windows systems, name the interface library hsm_0018.dll; for Linux systems, rename it to libhsm_0018.so.
-- Place the configuration files required by the interface library according to the recommendations of the cryptographic device vendor.
-- In the Roo Code settings menu, configure the API provider, URL, API key, and model information.
-![API Provider](./doc/API提供商.png)
-- In the Roo Code MCP service management menu, check if the mcp-hsm service is connected.
-![MCP Service Management](./doc/MCP服务管理.png)
+### Configuration MCP-HSM
 
-### Usage Example
-- For example, use a given symmetric key to perform SM4 ECB mode encryption on random data.
-- Input the following content in Roo Code:
-```plaintext
-生成32字节随机数作为待加密数据，使用0123456789abcdef0123456789abcdef作为对称密钥，进行SM4 ECB加密。
+MCP-HSM adheres to the standard MCP protocol and can be invoked by any MCP client.
+
+This example uses the Roo Code plugin in VS Code as the MCP client. Before using this suite, select an available API provider in the Roo Code plugin, enter the correct API key or base URL, and choose the model. In the Roo Code MCP service management menu, click "Edit Project Configuration" and write the following content into the created mcp.json file:
+
+```json
+{
+  "mcpServers": {
+    "mcp-hsm": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        ".",
+        "run",
+        "server.py"
+      ],
+      "env": {
+        "LIBHSM_PATH": ".\\lib\\hsm_0018.dll"
+      }
+    }
+  }
+}
 ```
-- The MCP service invocation process is shown in the following figures：
-![Symm Operation](./doc/对称运算1.png)
-![Symm Operation](./doc/对称运算2.png)
+
+Save the file and click "Reconnect" to ensure the MCP service is connected.
+
+![Symm Operation](./doc/MCP服务管理.png)
+
+Create a lib directory, rename the interface library compliant with "GM/T 0018 Interface specifications of cryptography device application" to hsm_0018.dll, and place it in the directory. If the interface library includes other dependent libraries, they should also be placed in the same directory. If the interface library depends on other configuration files, follow the recommendations of the interface library provider and place them in the specified directory.
+
+### Usage
+
+For example, to use the SM2 key generation tool, type "Generate SM2 key pair" in the Roo Code dialog box and send the task.
+
+![MCP服务管理](./doc/SM2密钥生成.png)
+
+As shown in the image, MCP-HSM can automatically invoke the HSM module's interface to generate an SM2 key pair compliant with domestic cryptographic standards.
 
 ## Contribution Guidelines
 We welcome contributions or suggestions for improvement! Please refer to the contribution guidelines to learn how to participate in the project.
 
 ## License
-mcp-hsm follows the Apache License 2.0, allowing free use, modification, and distribution.
+MCP-HSM follows the Apache License 2.0, allowing free use, modification, and distribution.
 
 ## Contact Us
 For further information or technical support, please visit the GitHub project page or contact the project maintainers.
