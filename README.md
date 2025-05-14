@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/sansec-ai-mcp-hsm-badge.png)](https://mseep.ai/app/sansec-ai-mcp-hsm)
+
 # MCP协议密码套件 (mcp-hsm)  [English Version](./README_en.md)
 
 [![GitHub](https://img.shields.io/github/license/sansec-ai/mcp-hsm)](https://github.com/sansec-ai/mcp-hsm)
